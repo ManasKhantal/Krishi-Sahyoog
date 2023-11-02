@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // import { useNavigation } from '@react-navigation/native';
 import React, { useLayoutEffect } from 'react'
 import HeadSection from './HeadSection';
-
+import 'react-native-gesture-handler';
 const About = () => {
   return (
     <SafeAreaView>

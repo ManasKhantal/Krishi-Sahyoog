@@ -2,7 +2,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react'
 import Home from './Home'
 import Details from './Details'
-
+import 'react-native-gesture-handler';
 const Stack = createStackNavigator();
 
 const Homestack = () => {

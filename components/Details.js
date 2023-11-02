@@ -4,7 +4,7 @@ import {Picker} from '@react-native-picker/picker';
 import { useLayoutEffect } from 'react';
 import axios from 'axios';
 import * as Location from 'expo-location';
-
+import 'react-native-gesture-handler';
 const Details = ({ navigation, route }) => {
 
     const [coord, setCoord] = useState(null);

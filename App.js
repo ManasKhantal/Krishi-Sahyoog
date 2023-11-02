@@ -2,6 +2,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import About from './components/About';
 import Homestack from './components/Homestack';
+import 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
 

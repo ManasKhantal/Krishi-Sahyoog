@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image} from 'react-native'
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from 'react'
-
+import 'react-native-gesture-handler';
 const HeadSection = () => {
   return (
       <View style={styles.header}>
