@@ -4,37 +4,20 @@ import {Picker} from '@react-native-picker/picker';
 import { useLayoutEffect } from 'react';
 import axios from 'axios';
 import * as Location from 'expo-location';
-import 'react-native-gesture-handler';
-const Details = ({ navigation, route }) => {
 
-    const [coord, setCoord] = useState(null);
+const Details = ({ navigation, route, }) => {
+
+    // const [coord, setCoord] = useState({});
     const [data, setData] = useState([]);
     const [selectedValue, setSelectedValue] = useState("location");
 
     const { commodity } = route.params;
+    const {coord} = route.params;
 
     useEffect(() => {
         (async () => {
-
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                setErrorMsg('Permission to access location was denied');
-                return;
-            }
-            try {
-                let loc = await Location.getCurrentPositionAsync({});
-                console.log(loc);
-                if(loc){
-                    setCoord(loc.coords);
-                }else{
-                    setCoord(null);
-                }
-            }
-            catch (err) {
-                console.log(err);
-            }
-
             await getdata(commodity);
+            console.log(coord);
 
         })();
     }, []);
@@ -45,7 +28,7 @@ const Details = ({ navigation, route }) => {
         });
     }, [navigation]);
 
-    async function getdata(commodity = "", limit = 25) {
+    async function getdata(commodity = "", limit = 30) {
         let url = 'https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=579b464db66ec23bdd0000019eaed1ae95144f925f630f26665d3a02&format=json';
         if (commodity !== "") {
             url = url + '&filters[commodity]=' + commodity;
@@ -67,6 +50,7 @@ const Details = ({ navigation, route }) => {
             }
             );
             setData(records);
+            console.log(records.length);
         }
         catch (err) {
             console.error(err);
@@ -75,11 +59,12 @@ const Details = ({ navigation, route }) => {
     }
 
     async function getdistance(market, district, state) {
-        if(coord == null){
-            return 99999;
-        }
+        // console.log(coord);
+        // if(coord == null){
+        //     return 99999;
+        // }
         let url2 = 'http://api.positionstack.com/v1/forward?access_key=50b6212e95f574839bb5cc27d3ddc85f';
-        let url3 = url2 + '&query=' + market + ' ' + district + ' ' + state + ' India';
+        let url3 = url2 + '&query=' + market + ', ' + district + ', ' + state + ' India';
         let latitude1 = 0, longitude1 = 0;
         try {
             let res = await axios.get(url3);
@@ -88,7 +73,7 @@ const Details = ({ navigation, route }) => {
                 longitude1 = res.data.data[0].longitude;
                 console.log(latitude1 + " " + longitude1);
             } else {
-                let url4 = url2 + '&query=' + state + ' India';
+                let url4 = url2 + '&query=' + district + ', ' + state + ', India';
 
                 let res2 = await axios.get(url4);
                 if (res2.data.data.length > 0) {
@@ -102,12 +87,12 @@ const Details = ({ navigation, route }) => {
             console.log(err);
         }
         
-        let distance = calculateDistance(coord.latitude, coord.longitude, latitude1, longitude1);
-        // console.log(typeof(distance));
+        let distance = await calculateDistance(coord.latitude, coord.longitude, latitude1, longitude1);
+        console.log(distance);
         return distance;
     }
 
-    function calculateDistance(lat1, lon1, lat2, lon2) {
+    async function calculateDistance(lat1, lon1, lat2, lon2) {
         const earthRadius = 6371; // Earth's radius in kilometers (you can use 3959 for miles)
 
         // Convert latitude and longitude from degrees to radians
@@ -137,7 +122,7 @@ const Details = ({ navigation, route }) => {
         setSelectedValue(itemValue);
         if (itemValue == 'price') {
             data.sort((a, b) => {
-                return a.modal_price - b.modal_price;
+                return b.modal_price - a.modal_price;
             });
         } else {
             data.sort((a, b) => {
@@ -149,6 +134,7 @@ const Details = ({ navigation, route }) => {
     return (
         <View>
             <Text>Details</Text>
+            {/* <text>{coord.latitude}</text> */}
             <Picker
                 selectedValue={selectedValue}
                 onValueChange={(itemValue) => sortData(itemValue)}>
